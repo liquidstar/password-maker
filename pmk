@@ -1,0 +1,44 @@
+#!/bin/bash
+
+PhraseCount=$1
+MaxNumLen=$2
+# Pick a dict file randomly (if many)
+DictDir=/usr/share/dict
+SymbolsFile=./symbols
+DictCount=$(ls -A ${DictDir} | wc -l)
+DictFile=${DictDir}/$(ls -A $DictDir | sed -n "$(( $RANDOM % $DictCount + 1 ))p")
+DictLen=$( wc -l < ${DictFile})
+
+# Random Word
+function randomWord() {
+	local i=$1
+	local Len=$2
+	local Dictionary=$3
+	if (( i == 0 ))
+	then
+		printf "%d" $(( $RANDOM % $MaxNumLen ))
+	else
+		sed -n "$(( $RANDOM % $Len + 1 ))p" $Dictionary | sed -e "s/^\(.\)/\u\1/g"
+	fi
+	return
+}
+
+# Random Symbol
+function randomSymbol() {
+	local Len=$(wc -l < ${SymbolsFile})
+	if (( $RANDOM % 2 ))
+	then
+		sed -n "$(( $RANDOM % $Len + 1 ))p" $SymbolsFile
+	fi
+	return
+}
+
+for (( i=0;i<PhraseCount;i++ ))
+do
+	printf "%s" $(randomWord $i $DictLen $DictFile)
+	if (( i < PhraseCount - 1 ))
+	then
+		printf "%s" $(randomSymbol)
+	fi
+done
+echo ""
