@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cp pmk /usr/local/bin
+echo "Installation done"
